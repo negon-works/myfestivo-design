@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyFestivo — Premium Luxury</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Google Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+
+<style>
+  :root{
+    --ivory:#FCFAF7;
+    --white:#ffffff;
+    --ink:#222221;
+    --muted:#6F6C66;
+    --line:#E9E5DE;
+    --gold:#C3A46A;          /* muted champagne */
+    --gold-ink:#c5a159;      /* deeper shade */
+    --shadow:0 10px 30px rgba(0,0,0,.06);
+  }
+
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    width:100%;
+    overflow-x:hidden; /* prevent sideways scroll */
+  }
+  body{
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--ivory) url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+  }
+
+  /* Material Symbols setup */
+  .ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;vertical-align:-6px}
+  .ms.fill{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}
+
+/* ===== TOP BAR ===== */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background-color: rgba(252,250,247,0); /* start fully transparent */
+    transition: backdrop-filter 0.3s ease;
+    z-index: 1000;
+  }
+
+  .brand{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700; letter-spacing:.4px;
+    font-size:1.4rem; color:var(--gold-ink);
+    text-decoration:none;
+  }
+
+  .left, .right{display:flex; align-items:center; gap:12px}
+
+  .icon-btn{
+    appearance:none; border:none; background:transparent; cursor:pointer;
+    width:40px; height:40px; border-radius:10px;
+    display:grid; place-items:center;
+    color:var(--ink);
+    transition:transform .15s ease, background .2s ease, color .2s ease;
+  }
+  .icon-btn:active{ transform:translateY(-2px); }
+  .icon-btn:hover{ background:rgba(0,0,0,.04); }
+
+  .hamburger .ms{font-size:24px}
+  .notif-dot{
+    position:absolute; top:8px; right:10px;
+    width:8px; height:8px; background:#E05D5D; border-radius:50%;
+    box-shadow:0 0 0 2px var(--white);
+  }
+
+  /* ===== DRAWER ===== */
+  .scrim{
+    position:fixed; inset:0; background:rgba(0,0,0,.35);
+    opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease; z-index:999;
+  }
+  .scrim.show{opacity:1; visibility:visible;}
+
+  .drawer{
+    position:fixed; inset:0 auto 0 -320px; width:300px; background:var(--white);
+    box-shadow:var(--shadow); z-index:1001; transition:transform .3s ease;
+    transform:translateX(0);
+    border-right:1px solid var(--line);
+    display:flex; flex-direction:column;
+  }
+  .drawer.show{transform:translateX(320px);}
+  .drawer-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px; border-bottom:1px solid var(--line);
+  }
+  .drawer-title{
+    font-family:'Cormorant Garamond',serif; font-weight:700; color:var(--gold-ink);
+    font-size:1.25rem;
+  }
+  .drawer-nav{padding:8px}
+  .drawer a{
+    display:flex; align-items:center; gap:12px;
+    padding:12px; border-radius:10px; text-decoration:none; color:var(--ink);
+    transition:background .2s ease, transform .15s ease;
+  }
+  .drawer a:hover{ background:#F7F5F1; }
+  .drawer a .ms{font-size:22px; color:var(--gold-ink);}
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    max-width: 100%;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.4), rgba(252,250,247,1)),
+                url('hero.png') no-repeat center center;
+    background-size: cover;
+  }
+
+  .hero-inner{ max-width:780px; }
+  .hero h1{
+    font-family:'Cormorant Garamond',serif; font-weight:700; line-height:1.1;
+    font-size:clamp(2rem, 4vw, 3.2rem); color:#1f1e1c; margin:0 0 12px;
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+  }
+  .hero p{ color:#3e3c36; margin:0 0 20px; font-size:1rem; }
+
+  .btn{
+    display:inline-block; padding:12px 20px; border-radius:12px;
+    background:linear-gradient(180deg, var(--gold), #B79453);
+    color:#fff; font-weight:600; text-decoration:none;
+    box-shadow:0 8px 20px rgba(195,164,106,.25);
+    transition:transform .15s ease, filter .2s ease;
+  }
+  .btn:active{ transform:translateY(-2px); filter:brightness(.98); }
+
+/* ===== CATEGORIES ===== */
+#categories {
+  position: relative;
+  min-height: 10vh;
+  max-width: 100%;
+  padding: 72px 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,1) 0%,     /* solid at the top */
+    rgba(255,255,255,0.8) 40%,  /* smooth fade */
+    rgba(255,255,255,0) 100%    /* fully transparent at bottom */
+  );
+  z-index: 1;
+}
+
+
+  /* ===== SECTION BASE ===== */
+  section{ padding:72px 20px; max-width:1100px; margin:0 auto; }
+  section h2{
+    font-family:'Cormorant Garamond',serif; font-size:2rem; margin:0 0 8px;
+  }
+  section > p{ color:var(--muted); margin:0 auto 24px; max-width:720px; text-align:center; }
+
+  /* ===== PAPER RIGHT ===== */
+  .paper-right{
+    position:relative; overflow:hidden; background:var(--white); border:1px solid var(--line);
+    border-radius:16px;
+  }
+
+  /* ===== CARDS ===== */
+  .grid{ display:grid; gap:18px; }
+  .services .grid{ grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); }
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:14px;
+    padding:18px; box-shadow:var(--shadow); text-align:center;
+  }
+  .card .ms{ font-size:26px; color:var(--gold-ink); }
+
+  /* Providers */
+  .providers{ grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+  .provider-card .thumb{
+    height:140px; border-radius:10px; background:#F2EFE8; margin:0 0 12px;
+  }
+  .provider-card h3{ margin:0 0 4px; font-size:1.05rem; }
+  .meta{ color:var(--muted); font-size:.95rem; margin-bottom:12px; }
+
+  /* Profile */
+  .profile-banner{ height:220px; border-radius:14px; background:#F1EEE6; }
+  .profile-info{ text-align:center; padding:16px 0 0; }
+  .gallery{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:18px 0; }
+  .ph{ height:100px; background:#F2EFE8; border-radius:10px; }
+
+  /* Team */
+  .team-list{ display:grid; gap:12px; }
+  .team-card{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .team-card .mini{ width:52px; height:52px; border-radius:10px; background:#F1EEE6; }
+  .team-summary{ text-align:center; margin-top:14px; }
+
+  /* Compact buttons in team (mobile-friendly) */
+  @media(max-width:480px){
+    .team-card .btn{
+      padding:6px 10px;
+      font-size:13px;
+    }
+    .team-summary .btn{
+      padding:8px 16px;
+      font-size:13px;
+      border-radius:10px;
+      margin:4px 0;
+      display:inline-block;
+    }
+    .team-summary a.btn + a.btn{
+      display:block;
+      margin-left:0;
+      margin-top:8px;
+    }
+  }
+
+  /* Pills */
+  .pill{ display:inline-block; padding:6px 10px; border:1px solid var(--line); border-radius:999px; background:#fff; font-size:.9rem; }
+
+  /* Inquiry form */
+  .form{
+    max-width:560px; margin:0 auto; background:var(--white);
+    border:1px solid var(--line); border-radius:14px; padding:18px; box-shadow:var(--shadow);
+  }
+  .form input,.form textarea{
+    width:100%; padding:12px; border:1px solid #DDD7CE; border-radius:10px; margin-bottom:12px;
+    font:inherit; background:#fff;
+  }
+
+  /* Footer */
+  footer{ text-align:center; padding:32px 16px; color:var(--muted); }
+
+  /* ===== MOBILE DOCK ===== */
+  .dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 68px;
+    background: var(--white);
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding: 8px 10px;
+    overflow: visible;
+  }
+  .dock a {
+    text-decoration: none;
+    color: var(--ink);
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    transition: transform .18s ease, box-shadow .18s ease, background .2s ease, color .2s ease;
+  }
+  .dock a .ms { font-size: 26px; }
+  .dock a.active {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 18px rgba(0,0,0,.12);
+    color: var(--gold-ink);
+    background: #fff;
+  }
+  /* ===== footer ===== */
+footer {
+  background: var(--ivory);
+  border-top: 1px solid #eee;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--gold);
+}
+
+.footer-left p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.footer-right a {
+  text-decoration: none;
+  color: var(--text);
+  margin-left: 1rem;
+  font-size: 0.9rem;
+}
+
+.footer-right a:hover {
+  color: var(--gold);
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .footer-right {
+    margin-top: 1rem;
+  }
+}
+
+
+  @media (min-width: 768px) {
+    .dock { display: none; }
+  }
+</style>
+
+
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar" id="topbar">
+  <div class="left">
+    <button class="icon-btn hamburger" id="openDrawer" aria-label="Menu">
+      <span class="ms">apps</span>
+    </button>
+    <a href="#home" class="brand">MyFestivo</a>
+  </div>
+  <div class="right" style="display:flex; align-items:center; gap:8px; position:relative;">
+    <button class="icon-btn" id="openSearch" aria-label="Search"><span class="ms">search</span></button>
+    <div id="searchBar" style="position:relative; overflow:hidden; width:0; transition:width 0.3s ease;">
+      <input id="searchInput" type="text" placeholder="Search services..." 
+             style="width:200px; padding:8px 12px; border:1px solid var(--line); border-radius:12px; outline:none; font-size:0.95rem; opacity:0; transition:opacity 0.25s ease;">
+    </div>
+    <button class="icon-btn" id="notifBtn" aria-label="Notifications" style="position:relative">
+      <span class="ms">notifications</span>
+      <span class="notif-dot" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>
+
+
+
+<!-- SCRIM + DRAWER -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div class="drawer-title">Menu</div>
+    <button class="icon-btn" id="closeDrawer" aria-label="Close"><span class="ms">close</span></button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="#home"><span class="ms">home</span>Home</a>
+    <a href="#categories"><span class="ms">category</span>categories</a>
+    <a href="#category"><span class="ms">photo_camera</span>Browse Photographers</a>
+    <a href="#profile"><span class="ms">person</span>Profile</a>
+    <a href="#wishlist"><span class="ms">favorite</span>Wishlist</a>
+    <a href="#chat"><span class="ms">chat_bubble</span>Chat</a>
+    <a href="#team"><span class="ms">group</span>Team</a>
+    <a href="#inquiry"><span class="ms">mail</span>Inquiry</a>
+    <a href="#"><span class="ms">settings</span>Settings</a>
+  </nav>
+</aside>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="home" role="banner">
+  <div class="hero-inner">
+    <h1>Craft Your Dream Event Team</h1>
+    <p>Pick your favorite photographers, decorators, caterers & more — all in one elegant place.</p>
+    <a href="#categories" class="btn">Start Building</a>
+  </div>
+</section>
+
+<!-- ===== CATEGORIES ===== -->
+<section id="categories" class="services">
+  <h2>Categories</h2>
+  <p>Everything you need for weddings, birthdays & events — all in one place.</p>
+  <div class="grid">
+    <div class="card"><span class="ms">photo_camera</span><div>Photographers</div></div>
+    <div class="card"><span class="ms">restaurant</span><div>Caterers</div></div>
+    <div class="card"><span class="ms">local_florist</span><div>Decorators</div></div>
+    <div class="card"><span class="ms">music_note</span><div>Music & DJs</div></div>
+    <div class="card"><span class="ms">lightbulb</span><div>Lighting</div></div>
+    <div class="card"><span class="ms">flight</span><div>Travel & Stays</div></div>
+  </div>
+</section>
+
+<!-- ===== WHY CHOOSE (paper-right) ===== -->
+<section class="paper-right" id="why">
+  <div style="padding:32px 24px;">
+    <h2>Why Choose Us?</h2>
+    <p>Verified vendors, real reviews, and effortless planning. We bring your dream team together with trust and taste.</p>
+  </div>
+</section>
+
+
+
+<!-- ===== BROWSE PHOTOGRAPHERS ===== -->
+<section id="category">
+  <h2>Browse Photographers</h2>
+  <p>Luxury coverage from candid to classic.</p>
+  <div class="grid providers">
+    <div class="card provider-card">
+      <div class="thumb"></div>
+      <h3>Photo Studio Pro</h3>
+      <div class="meta">₹15,000 · Delhi · 4.8 ★</div>
+      <a class="btn" href="#profile">View Profile</a>
+    </div>
+    <div class="card provider-card">
+      <div class="thumb"></div>
+      <h3>Classic Moments</h3>
+      <div class="meta">₹20,000 · Mumbai · 4.9 ★</div>
+      <a class="btn" href="#profile">View Profile</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROFILE (paper-right) ===== -->
+<section id="profile" class="paper-right">
+  <div style="padding:24px;">
+    <div class="profile-banner"></div>
+    <div class="profile-info">
+      <h2>Photo Studio Pro</h2>
+      <p class="meta">Capturing memories that last a lifetime · ₹15,000 · Delhi</p>
+      <a class="btn" href="#team">Add to Team</a>
+    </div>
+    <div class="gallery">
+      <div class="ph"></div><div class="ph"></div><div class="ph"></div>
+    </div>
+    <p class="meta" style="text-align:center; max-width:780px; margin:0 auto;">
+      Specializes in beautiful candid wedding moments, covering 500+ celebrations across India.
+    </p>
+  </div>
+</section>
+
+<!-- ===== TEAM ===== -->
+<section id="team">
+  <h2>Your Dream Team</h2>
+  <div class="team-list">
+    <div class="card team-card">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="mini"></div>
+        <div>Photo Studio Pro</div>
+      </div>
+      <div>₹15,000 <button class="btn" style="margin-left:12px;">Remove</button></div>
+    </div>
+  </div>
+  <div class="team-summary">
+    <p>Total: <strong>₹15,000</strong></p>
+    <a class="btn" href="#">Download Summary</a>
+    <a class="btn" href="#inquiry" style="margin-left:8px;">Submit Inquiry</a>
+  </div>
+</section>
+
+<!-- ===== WISHLIST ===== -->
+<section id="wishlist" class="paper-right">
+  <div style="padding:24px;">
+    <h2>Wishlist</h2>
+    <p>Save the vendors you love and compare with ease.</p>
+    <div class="grid providers" style="margin-top:12px;">
+      <div class="card provider-card">
+        <div class="thumb"></div>
+        <h3>Golden Frames</h3>
+        <div class="meta">₹18,000 · Jaipur · 4.7 ★</div>
+        <span class="pill"><span class="ms">favorite</span> Saved</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHAT ===== -->
+<section id="chat">
+  <h2>Chat</h2>
+  <p>All your vendor conversations in one place.</p>
+  <div class="card" style="max-width:720px; margin:16px auto;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span class="ms">chat_bubble</span> You: Hello! Are you available for Dec 12?
+    </div>
+  </div>
+</section>
+
+<!-- ===== INQUIRY (paper-right) ===== -->
+<section id="inquiry" class="paper-right">
+  <div style="padding:24px;">
+    <h2>Submit Inquiry</h2>
+    <p>Tell us your date and vision — we’ll take care of the rest.</p>
+    <form class="form">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Email" required>
+      <input type="date" required>
+      <textarea rows="4" placeholder="Your Message"></textarea>
+      <button type="submit" class="btn">Send Inquiry</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <div class="footer-left">
+        <h3>MyFestivo</h3>
+        <p>&copy; 2025 MyFestivo. All rights reserved.</p>
+        </div>
+        <div class="footer-right">
+        <a href="#home">Home</a>
+        <a href="#services">Services</a>
+        <a href="#inquiry">Contact</a>
+        </div>
+    </div>
+</footer>
+
+
+<!-- ===== MOBILE DOCK ===== -->
+<nav class="dock" aria-label="App dock">
+  <a href="#home" class="dock-link active" data-target="#home" aria-label="Home">
+    <span class="ms">home</span>
+  </a>
+  <a href="#categories" class="dock-link" data-target="#categories" aria-label="Categories">
+    <span class="ms">category</span>
+  </a>
+  <a href="#team" class="dock-link" data-target="#team" aria-label="My Team">
+    <span class="ms">diversity_3</span>
+  </a>
+  <a href="#profile" class="dock-link" data-target="#profile" aria-label="Profile">
+    <span class="ms">person</span>
+  </a>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const topbar = document.getElementById("topbar");
+  const maxScroll = 200; // how far scroll takes full opacity
+
+  /* ===== TOPBAR FADE ON SCROLL ===== */
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const opacity = Math.min(scrollY / maxScroll, 1); // 0 → 1
+    topbar.style.backgroundColor = `rgba(252,250,247,${opacity})`;
+    topbar.style.backdropFilter = `saturate(130%) blur(${8 * opacity}px)`;
+    topbar.style.webkitBackdropFilter = `saturate(130%) blur(${8 * opacity}px)`;
+  };
+
+  handleScroll(); // initial check
+  window.addEventListener("scroll", handleScroll, { passive: true });
+
+  /* ===== DRAWER OPEN/CLOSE ===== */
+  const drawer = document.getElementById("drawer");
+  const scrim = document.getElementById("scrim");
+  const openDrawer = document.getElementById("openDrawer");
+  const closeDrawer = document.getElementById("closeDrawer");
+
+  function showDrawer(show) {
+    drawer.classList.toggle("show", show);
+    scrim.classList.toggle("show", show);
+    drawer.setAttribute("aria-hidden", !show);
+    document.body.style.overflow = show ? "hidden" : "";
+  }
+
+  openDrawer?.addEventListener("click", () => showDrawer(!drawer.classList.contains("show")));
+  closeDrawer?.addEventListener("click", () => showDrawer(false));
+  scrim?.addEventListener("click", () => showDrawer(false));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") showDrawer(false); });
+  document.querySelectorAll(".drawer a").forEach((link) => {
+    link.addEventListener("click", () => showDrawer(false));
+  });
+
+  /* ===== DOCK ACTIVE STATE ===== */
+  const dockLinks = document.querySelectorAll(".dock-link");
+  dockLinks.forEach((a) => {
+    a.addEventListener("click", () => {
+      dockLinks.forEach((d) => d.classList.remove("active"));
+      a.classList.add("active");
+    });
+  });
+
+  /* ===== SEARCH BAR TOGGLE ===== */
+  const searchBar = document.getElementById("searchBar");
+  const searchInput = document.getElementById("searchInput");
+  const openSearch = document.getElementById("openSearch");
+  const dockSearch = document.getElementById("dockSearch");
+
+  function toggleSearchBar() {
+    if (!searchBar || !searchInput) return;
+    const isOpen = searchBar.style.width && searchBar.style.width !== "0px";
+    if (isOpen) {
+      searchBar.style.width = "0";
+      searchInput.style.opacity = "0";
+      searchInput.blur();
+    } else {
+      searchBar.style.width = "200px";
+      setTimeout(() => (searchInput.style.opacity = "1"), 50);
+      searchInput.focus();
+    }
+  }
+
+  openSearch?.addEventListener("click", toggleSearchBar);
+  dockSearch?.addEventListener("click", () => {
+    toggleSearchBar();
+    document.querySelector("#category")?.scrollIntoView({ behavior: "smooth" });
+  });
+});
+</script>
+
+
+</body>
+</html>
